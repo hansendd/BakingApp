@@ -17,11 +17,6 @@ public class MainActivity extends AppCompatActivity implements RecipeListAdapter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        RecipeListFragment recipeListFragment = new RecipeListFragment();
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.recipe_list_container, recipeListFragment).commit();
     }
 
     @Override

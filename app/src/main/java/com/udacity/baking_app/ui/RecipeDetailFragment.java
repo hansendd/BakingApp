@@ -89,11 +89,11 @@ public class RecipeDetailFragment extends Fragment  {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        GridLayoutManager gridLayoutManager = (GridLayoutManager) stepListRecyclerView.getLayoutManager();
-        int scrollLocation = gridLayoutManager.findFirstVisibleItemPosition();
-
-        outState.putInt("SCROLL_LOCATION", scrollLocation);
-        outState.putParcelable("RECIPE", recipe);
+//        GridLayoutManager gridLayoutManager = (GridLayoutManager) stepListRecyclerView.getLayoutManager();
+//        int scrollLocation = gridLayoutManager.findFirstVisibleItemPosition();
+//
+//        outState.putInt("SCROLL_LOCATION", scrollLocation);
+//        outState.putParcelable("RECIPE", recipe);
     }
 
     public class IngredientRetrieval extends AsyncTask {
