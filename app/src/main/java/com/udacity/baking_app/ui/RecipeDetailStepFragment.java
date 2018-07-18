@@ -121,15 +121,15 @@ public class RecipeDetailStepFragment extends Fragment {
             // Source of logic:
             // https://stackoverflow.com/questions/46713761/how-to-play-video-full-screen-in-landscape-using-exoplayer
 
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)simpleExoPlayerView.getLayoutParams();
-            params.width = params.MATCH_PARENT;
-            params.height = 500;
-            ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-
-            if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                params.height = params.MATCH_PARENT;
-                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
-            }
+//            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)simpleExoPlayerView.getLayoutParams();
+//            params.width = params.MATCH_PARENT;
+//            params.height = 500;
+//            ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+//
+//            if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//                params.height = params.MATCH_PARENT;
+//                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+//            }
 
             exoPlayer.setPlayWhenReady(true);
         }
