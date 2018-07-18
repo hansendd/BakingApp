@@ -61,7 +61,7 @@ public class RecipeDetailFragment extends Fragment  {
         stepListRecyclerView.setHasFixedSize(true);
 
         if (savedInstanceState == null) {
-            recipe = (Recipe) getArguments().getParcelable("recipe");
+            recipe = (Recipe) getArguments().getParcelable(getString(R.string.extra_recipe));
 
             try {
                 new IngredientRetrieval().execute(recipe.getId());
@@ -76,10 +76,12 @@ public class RecipeDetailFragment extends Fragment  {
             }
         }
         else {
-            recipe = savedInstanceState.getParcelable("RECIPE");
+            recipe = savedInstanceState.getParcelable(getString(R.string.extra_recipe));
             recipeDetailStepAdapter.loadSteps(recipe.getStepList());
             formatIngredients();
         }
+
+//        ((RecipeDetailActivity) getActivity()).getSupportActionBar().setTitle(recipe.getName());
 
         return view;
     }

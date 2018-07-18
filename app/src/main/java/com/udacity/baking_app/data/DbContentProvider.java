@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.udacity.baking_app.R;
 import com.udacity.baking_app.model.Ingredient;
 
 public class DbContentProvider extends ContentProvider {
@@ -69,7 +70,7 @@ public class DbContentProvider extends ContentProvider {
                 tableName = StepContract.StepEntry.TABLE_NAME;
                 break;
             default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+                throw new UnsupportedOperationException(getContext().getResources().getString(R.string.error_unknown_uri) + uri);
         }
 
         Cursor retCursor = null;
@@ -137,7 +138,7 @@ public class DbContentProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException(getContext().getResources().getString(R.string.error_not_yet_implemented));
     }
 
     @Nullable
@@ -157,7 +158,7 @@ public class DbContentProvider extends ContentProvider {
                 sqLiteDatabase = stepDbHelper.getWritableDatabase();
                 break;
             default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+                throw new UnsupportedOperationException(getContext().getResources().getString(R.string.error_unknown_uri) + uri);
         }
 
         Uri returnUri = null;
@@ -168,7 +169,7 @@ public class DbContentProvider extends ContentProvider {
                     returnUri = ContentUris.withAppendedId(RecipeContract.RecipeEntry.CONTENT_URI, id);
                 }
                 else {
-                    throw new SQLException("Filed to insert row into " + uri);
+                    throw new SQLException(getContext().getResources().getString(R.string.error_insert_row_failed) + uri);
                 }
                 break;
             case INGREDIENTS:
@@ -177,7 +178,7 @@ public class DbContentProvider extends ContentProvider {
                     returnUri = ContentUris.withAppendedId(IngredientContract.IngredientEntry.CONTENT_URI, id);
                 }
                 else {
-                    throw new SQLException("Filed to insert row into " + uri);
+                    throw new SQLException(getContext().getResources().getString(R.string.error_insert_row_failed) + uri);
                 }
                 break;
             case STEPS:
@@ -186,7 +187,7 @@ public class DbContentProvider extends ContentProvider {
                     returnUri = ContentUris.withAppendedId(StepContract.StepEntry.CONTENT_URI, id);
                 }
                 else {
-                    throw new SQLException("Filed to insert row into " + uri);
+                    throw new SQLException(getContext().getResources().getString(R.string.error_insert_row_failed) + uri);
                 }
                 break;
         }
@@ -197,11 +198,11 @@ public class DbContentProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException(getContext().getResources().getString(R.string.error_not_yet_implemented));
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException(getContext().getResources().getString(R.string.error_not_yet_implemented));
     }
 }

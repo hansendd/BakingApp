@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.preference.PreferenceManager;
 
+import com.udacity.baking_app.R;
 import com.udacity.baking_app.data.IngredientContract;
 import com.udacity.baking_app.model.Ingredient;
 import com.udacity.baking_app.widget.IngredientWidgetProvider;
@@ -37,8 +38,8 @@ public class IngredientService extends IntentService {
 
     private void handleActionUpdateIngredientWidget() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String recipeName = sharedPreferences.getString("RECIPE_NAME", "");
-        int recipeId = sharedPreferences.getInt("RECIPE_ID", -1);
+        String recipeName = sharedPreferences.getString(getString(R.string.extra_recipe_name), "");
+        int recipeId = sharedPreferences.getInt(getString(R.string.extra_recipe_id), -1);
 
         Cursor cursor = getContentResolver().query(IngredientContract.IngredientEntry.CONTENT_URI,
                                                    null,

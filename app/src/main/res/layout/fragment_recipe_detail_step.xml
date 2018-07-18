@@ -20,4 +20,21 @@
         android:layout_height="wrap_content"
         android:id="@+id/textview_step_instructions"
         android:layout_margin="@dimen/default_margin"/>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_previous_step"
+            android:text="Previous"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_next_step"
+            android:text="Next"/>
+    </LinearLayout>
 </LinearLayout>

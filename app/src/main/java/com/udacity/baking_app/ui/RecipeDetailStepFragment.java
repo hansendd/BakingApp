@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -30,6 +31,9 @@ import com.udacity.baking_app.R;
 import com.udacity.baking_app.model.Step;
 import com.udacity.baking_app.utility.NetworkConnectionUtility;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -39,8 +43,12 @@ public class RecipeDetailStepFragment extends Fragment {
     @BindView(R.id.simpleExoPlayerView) SimpleExoPlayerView simpleExoPlayerView;
     @BindView(R.id.imageview_step_thumbnail) ImageView thumbnailImageView;
     @BindView(R.id.textview_step_instructions) TextView stepInstructionsTextView;
+    @BindView(R.id.button_previous_step) Button previousStepButton;
+    @BindView(R.id.button_next_step) Button nextStepButton;
 
     private SimpleExoPlayer exoPlayer;
+    private List<Step> stepList;
+    private int selectedIndex;
 
     public RecipeDetailStepFragment() {}
 
@@ -49,7 +57,9 @@ public class RecipeDetailStepFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_recipe_detail_step, container, false);
         ButterKnife.bind(this, view);
 
-        final Step step = (Step) getArguments().getParcelable("step");
+        stepList = getArguments().getParcelableArrayList(getString(R.string.extra_step_list));
+        selectedIndex = getArguments().getInt(getString(R.string.extra_selected_index));
+        final Step step = stepList.get(selectedIndex);
 
         if (step != null) {
             loadVideo(step);
@@ -57,8 +67,35 @@ public class RecipeDetailStepFragment extends Fragment {
             loadInstructions(step);
         }
         else {
-            Toast.makeText(getContext(), "Step could not be found, step not loaded.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.error_step_not_found), Toast.LENGTH_SHORT).show();
         }
+
+        previousStepButton.setEnabled(selectedIndex > 0);
+        nextStepButton.setEnabled(selectedIndex < stepList.size()-1);
+
+        previousStepButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                selectedIndex--;
+                final Step step = stepList.get(selectedIndex);
+                loadVideo(step);
+                loadThumbnail(step);
+                loadInstructions(step);
+                previousStepButton.setEnabled(selectedIndex > 0);
+                nextStepButton.setEnabled(selectedIndex < stepList.size()-1);
+            }
+        });
+
+        nextStepButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                selectedIndex++;
+                final Step step = stepList.get(selectedIndex);
+                loadVideo(step);
+                loadThumbnail(step);
+                loadInstructions(step);
+                previousStepButton.setEnabled(selectedIndex > 0);
+                nextStepButton.setEnabled(selectedIndex < stepList.size()-1);
+            }
+        });
 
         return view;
     }
@@ -70,9 +107,13 @@ public class RecipeDetailStepFragment extends Fragment {
     }
 
     private void loadVideo(Step step) {
+        if (exoPlayer != null) {
+            exoPlayer.stop();
+        }
         if (step.getVideoURL() != null &&
             !"".equals(step.getVideoURL())) {
             if (NetworkConnectionUtility.haveActiveNetworkConnection(getConnectivityManager())) {
+                simpleExoPlayerView.setVisibility(View.VISIBLE);
                 beginPlayer(createVideoURI(step.getVideoURL()));
             }
         }
@@ -109,14 +150,15 @@ public class RecipeDetailStepFragment extends Fragment {
             TrackSelector trackSelector = new DefaultTrackSelector();
             exoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
             simpleExoPlayerView.setPlayer(exoPlayer);
-            String userAgent = Util.getUserAgent(getContext(), "StepVideo");
-            MediaSource mediaSource = new ExtractorMediaSource(videoUri,
-                                                               new DefaultDataSourceFactory(getContext(),
-                                                                                            userAgent),
-                                                               new DefaultExtractorsFactory(),
-                                                               null,
-                                                               null);
-            exoPlayer.prepare(mediaSource);
+        }
+        String userAgent = Util.getUserAgent(getContext(), "StepVideo");
+        MediaSource mediaSource = new ExtractorMediaSource(videoUri,
+                                                           new DefaultDataSourceFactory(getContext(),
+                                                                                        userAgent),
+                                                           new DefaultExtractorsFactory(),
+                                                           null,
+                                                           null);
+        exoPlayer.prepare(mediaSource);
 
             // Source of logic:
             // https://stackoverflow.com/questions/46713761/how-to-play-video-full-screen-in-landscape-using-exoplayer
@@ -131,8 +173,8 @@ public class RecipeDetailStepFragment extends Fragment {
 //                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
 //            }
 
-            exoPlayer.setPlayWhenReady(true);
-        }
+        exoPlayer.setPlayWhenReady(true);
+//        }
     }
 
     private void releasePlayer() {

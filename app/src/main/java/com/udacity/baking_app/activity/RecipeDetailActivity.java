@@ -9,13 +9,18 @@ import android.widget.LinearLayout;
 
 import com.udacity.baking_app.R;
 import com.udacity.baking_app.adapter.RecipeDetailStepAdapter;
+import com.udacity.baking_app.model.Recipe;
 import com.udacity.baking_app.model.Step;
 import com.udacity.baking_app.ui.RecipeDetailFragment;
 import com.udacity.baking_app.ui.RecipeDetailStepFragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RecipeDetailActivity extends AppCompatActivity implements RecipeDetailStepAdapter.RecipeDetailStepOnClickHandler {
 
     private boolean twoPane;
+    private String recipeName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +30,11 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         LinearLayout linearLayoutRecipeDetail = findViewById(R.id.linear_layout_recipe_detail);
 
         Bundle selectedRecipeBundle = getIntent().getExtras();
+
+        Recipe recipe = getIntent().getParcelableExtra(getString(R.string.extra_recipe));
+        recipeName = recipe.getName();
+        getSupportActionBar().setTitle(recipeName);
+
         RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
         recipeDetailFragment.setArguments(selectedRecipeBundle);
 
@@ -39,16 +49,21 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
     }
 
     @Override
-    public void onClick(Step step) {
+    public void onClickRecipeDetailStep(int selectedIndex,
+                                        List<Step> stepList) {
         if (!twoPane) {
             Intent recipeDetailIntent = new Intent(this,
                                                    RecipeDetailStepActivity.class);
-            recipeDetailIntent.putExtra("step", step);
+            recipeDetailIntent.putParcelableArrayListExtra(getString(R.string.extra_step_list), new ArrayList(stepList));
+            recipeDetailIntent.putExtra(getString(R.string.extra_selected_index), selectedIndex);
+            recipeDetailIntent.putExtra(getString(R.string.extra_recipe_name), recipeName);
             startActivity(recipeDetailIntent);
         }
         else {
             Bundle bundle = new Bundle();
-            bundle.putParcelable("step", step);
+            bundle.putParcelableArrayList(getString(R.string.extra_step_list), new ArrayList(stepList));
+            bundle.putInt(getString(R.string.extra_selected_index), selectedIndex);
+            bundle.putString(getString(R.string.extra_recipe_name), recipeName);
             RecipeDetailStepFragment recipeDetailStepFragment = new RecipeDetailStepFragment();
             recipeDetailStepFragment.setArguments(bundle);
 

@@ -4,11 +4,13 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/default_margin">
+    android:layout_margin="@dimen/default_margin"
+    android:background="@drawable/border">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textview_step_description"/>
+        android:id="@+id/textview_step_description"
+        android:layout_margin="@dimen/default_margin"/>
 
 </LinearLayout>

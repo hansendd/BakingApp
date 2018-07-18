@@ -20,6 +20,9 @@ public class RecipeDetailStepActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             Bundle selectedRecipeBundle = getIntent().getExtras();
 
+            String recipeName = getIntent().getStringExtra(getString(R.string.extra_recipe_name));
+            getSupportActionBar().setTitle(recipeName);
+
             RecipeDetailStepFragment recipeDetailStepFragment = new RecipeDetailStepFragment();
             recipeDetailStepFragment.setArguments(selectedRecipeBundle);
 

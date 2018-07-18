@@ -5,4 +5,14 @@
     <string name="checking_recipe">Checking for new recipes...</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="extra_recipe">RECIPE</string>
+    <string name="extra_step_list">STEP_LIST</string>
+    <string name="extra_selected_index">SELECTED_INDEX</string>
+    <string name="extra_recipe_name">RECIPE_NAME</string>
+    <string name="format_step_description">%s %s</string>
+    <string name="error_unknown_uri">Unknown Uri:</string>
+    <string name="error_not_yet_implemented">Not yet implemented</string>
+    <string name="error_insert_row_failed">Failed to insert row into </string>
+    <string name="extra_recipe_id">RECIPE_ID</string>
+    <string name="error_step_not_found">Step could not be found, step not loaded.</string>
 </resources>

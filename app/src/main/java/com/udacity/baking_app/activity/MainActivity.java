@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements RecipeListAdapter
     public void onClick(Recipe recipe) {
         Intent recipeDetailIntent = new Intent(this,
                                                RecipeDetailActivity.class);
-        recipeDetailIntent.putExtra("recipe", recipe);
+        recipeDetailIntent.putExtra(getString(R.string.extra_recipe), recipe);
         startActivity(recipeDetailIntent);
     }
 }
