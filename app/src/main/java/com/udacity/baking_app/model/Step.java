@@ -19,11 +19,13 @@ public class Step implements Parcelable {
     public Step() {}
 
     public Step(Cursor stepDataCursor) {
+        int idIndex = stepDataCursor.getColumnIndexOrThrow(StepContract.StepEntry.COLUMN_NAME_ID);
         int recipeIdIndex = stepDataCursor.getColumnIndexOrThrow(StepContract.StepEntry.COLUMN_NAME_RECIPE_ID);
         int shortDescriptionIndex = stepDataCursor.getColumnIndexOrThrow(StepContract.StepEntry.COLUMN_NAME_SHORT_DESCRIPTION);
         int descriptionIndex = stepDataCursor.getColumnIndexOrThrow(StepContract.StepEntry.COLUMN_NAME_DESCRIPTION);
         int videoURLIndex = stepDataCursor.getColumnIndexOrThrow(StepContract.StepEntry.COLUMN_NAME_VIDEO_URL);
         int thumbnailURLIndex = stepDataCursor.getColumnIndexOrThrow(StepContract.StepEntry.COLUMN_NAME_THUMBNAIL_URL);
+        this.id = stepDataCursor.getInt(idIndex);
         this.recipeId = stepDataCursor.getInt(recipeIdIndex);
         this.shortDescription = stepDataCursor.getString(shortDescriptionIndex);
         this.description = stepDataCursor.getString(descriptionIndex);

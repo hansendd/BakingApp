@@ -10,7 +10,7 @@ import com.udacity.baking_app.adapter.RecipeListAdapter;
 import com.udacity.baking_app.model.Recipe;
 import com.udacity.baking_app.ui.RecipeListFragment;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity implements RecipeListAdapter.RecipeListOnClickHandler {
 
 
     @Override
@@ -21,6 +21,14 @@ public class MainActivity extends AppCompatActivity  {
         RecipeListFragment recipeListFragment = new RecipeListFragment();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().add(R.id.recipe_list_container, recipeListFragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.recipe_list_container, recipeListFragment).commit();
+    }
+
+    @Override
+    public void onClick(Recipe recipe) {
+        Intent recipeDetailIntent = new Intent(this,
+                                               RecipeDetailActivity.class);
+        recipeDetailIntent.putExtra("recipe", recipe);
+        startActivity(recipeDetailIntent);
     }
 }

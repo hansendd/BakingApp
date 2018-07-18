@@ -12,31 +12,46 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.MainActivity"
-                  android:launchMode="singleTop">
+        <activity
+            android:name=".activity.MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.udacity.baking_app.activity.RecipeDetailActivity"
-            android:parentActivityName="com.udacity.baking_app.activity.MainActivity">
+        <activity
+            android:name=".activity.RecipeDetailActivity"
+            android:parentActivityName=".activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.udacity.baking_app.activity.MainActivity"/>
+                android:value="com.udacity.baking_app.activity.MainActivity" />
         </activity>
-        <activity android:name="com.udacity.baking_app.activity.RecipeStepDetailActivity"
-            android:parentActivityName="com.udacity.baking_app.activity.RecipeDetailActivity">
+        <activity
+            android:name=".activity.RecipeDetailStepActivity"
+            android:parentActivityName=".activity.RecipeDetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.udacity.baking_app.activity.RecipeDetailActivity"/>
+                android:value="com.udacity.baking_app.activity.RecipeDetailActivity" />
         </activity>
 
         <provider
-            android:name="com.udacity.baking_app.data.DbContentProvider"
+            android:name=".data.DbContentProvider"
             android:authorities="com.udacity.baking_app"
-            android:exported="false"/>
+            android:exported="false" />
+
+        <receiver android:name=".widget.IngredientWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/ingredient_widget_provider_info" />
+        </receiver>
+
+        <service android:name=".service.IngredientService" />
     </application>
 
 </manifest>

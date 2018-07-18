@@ -1,8 +1,6 @@
 package com.udacity.baking_app.adapter;
 
 import android.content.Context;
-import android.graphics.Movie;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +35,7 @@ public class RecipeDetailStepAdapter extends RecyclerView.Adapter<RecipeDetailSt
 
     @Override
     public RecipeDetailStepAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.recipe_step_description_list_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.recipe_detail_step_list_item, parent, false);
 
         return new RecipeDetailStepAdapterViewHolder(view);
     }
@@ -46,7 +44,11 @@ public class RecipeDetailStepAdapter extends RecyclerView.Adapter<RecipeDetailSt
     public void onBindViewHolder(RecipeDetailStepAdapter.RecipeDetailStepAdapterViewHolder holder, int position) {
         Step step = stepList.get(position);
 
-        holder.stepDescriptionTextView.setText(step.getShortDescription());
+        String stepDescription = String.format("%s %s",
+                                               step.getId() + 1,
+                                               step.getShortDescription());
+
+        holder.stepDescriptionTextView.setText(stepDescription);
     }
 
     @Override

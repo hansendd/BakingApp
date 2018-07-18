@@ -1,14 +1,17 @@
 package com.udacity.baking_app.ui;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,8 +33,8 @@ import com.udacity.baking_app.utility.NetworkConnectionUtility;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RecipeStepDetailFragment extends Fragment {
-    private static final String className = RecipeStepDetailFragment.class.toString();
+public class RecipeDetailStepFragment extends Fragment {
+    private static final String className = RecipeDetailStepFragment.class.toString();
 
     @BindView(R.id.simpleExoPlayerView) SimpleExoPlayerView simpleExoPlayerView;
     @BindView(R.id.imageview_step_thumbnail) ImageView thumbnailImageView;
@@ -39,11 +42,11 @@ public class RecipeStepDetailFragment extends Fragment {
 
     private SimpleExoPlayer exoPlayer;
 
-    public RecipeStepDetailFragment() {}
+    public RecipeDetailStepFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recipe_step_detail, container, false);
+        View view = inflater.inflate(R.layout.fragment_recipe_detail_step, container, false);
         ButterKnife.bind(this, view);
 
         final Step step = (Step) getArguments().getParcelable("step");
@@ -72,7 +75,9 @@ public class RecipeStepDetailFragment extends Fragment {
             if (NetworkConnectionUtility.haveActiveNetworkConnection(getConnectivityManager())) {
                 beginPlayer(createVideoURI(step.getVideoURL()));
             }
-
+        }
+        else {
+            simpleExoPlayerView.setVisibility(View.GONE);
         }
     }
 
@@ -100,7 +105,7 @@ public class RecipeStepDetailFragment extends Fragment {
     }
 
     private void beginPlayer(Uri videoUri) {
-        if (simpleExoPlayerView == null) {
+        if (exoPlayer == null) {
             TrackSelector trackSelector = new DefaultTrackSelector();
             exoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
             simpleExoPlayerView.setPlayer(exoPlayer);
@@ -112,13 +117,29 @@ public class RecipeStepDetailFragment extends Fragment {
                                                                null,
                                                                null);
             exoPlayer.prepare(mediaSource);
+
+            // Source of logic:
+            // https://stackoverflow.com/questions/46713761/how-to-play-video-full-screen-in-landscape-using-exoplayer
+
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)simpleExoPlayerView.getLayoutParams();
+            params.width = params.MATCH_PARENT;
+            params.height = 500;
+            ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+
+            if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                params.height = params.MATCH_PARENT;
+                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+            }
+
             exoPlayer.setPlayWhenReady(true);
         }
     }
 
     private void releasePlayer() {
-        exoPlayer.stop();
-        exoPlayer.release();
-        exoPlayer = null;
+        if (exoPlayer != null) {
+            exoPlayer.stop();
+            exoPlayer.release();
+            exoPlayer = null;
+        }
     }
 }

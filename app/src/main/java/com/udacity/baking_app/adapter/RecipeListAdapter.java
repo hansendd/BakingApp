@@ -58,7 +58,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Re
         }
 
         holder.recipeName.setText(recipe.getName());
-        holder.serviceSize.setText(Integer.toString(recipe.getServings()));
+        holder.serviceSize.setText("Servings: " + Integer.toString(recipe.getServings()));
     }
 
     private ConnectivityManager getConnectivityManager() {

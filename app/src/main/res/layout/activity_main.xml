@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<fragment
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/recipe_list_container"
+    android:name="com.udacity.baking_app.ui.RecipeListFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activity.MainActivity">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/linear_layout_activity_main">
-
-        <FrameLayout
-            android:id="@+id/recipe_list_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-    </LinearLayout>
-
-</ScrollView>
+    android:layout_height="match_parent" />

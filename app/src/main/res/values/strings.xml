@@ -3,4 +3,6 @@
     <string name="no_network_connection">No network found, local recipes used.</string>
     <string name="check_recipe_error">Error checking recipes, local recipes used.</string>
     <string name="checking_recipe">Checking for new recipes...</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>

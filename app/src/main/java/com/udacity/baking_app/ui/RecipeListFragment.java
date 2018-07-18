@@ -2,12 +2,13 @@ package com.udacity.baking_app.ui;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,7 +23,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.udacity.baking_app.R;
 import com.udacity.baking_app.activity.MainActivity;
-import com.udacity.baking_app.activity.RecipeDetailActivity;
 import com.udacity.baking_app.adapter.RecipeListAdapter;
 import com.udacity.baking_app.data.IngredientContract;
 import com.udacity.baking_app.data.RecipeContract;
@@ -47,7 +47,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RecipeListFragment extends Fragment implements RecipeListAdapter.RecipeListOnClickHandler {
+public class RecipeListFragment extends Fragment {
     private static final String className = RecipeListFragment.class.toString();
 
     @BindView(R.id.recycler_view_recipe_list) RecyclerView recipeListRecyclerView;
@@ -81,11 +81,19 @@ public class RecipeListFragment extends Fragment implements RecipeListAdapter.Re
         }
 
         recipeListAdapter = new RecipeListAdapter(getContext(),
-                                                  this,
+                                                  (MainActivity)getActivity(),
                                                   recipeList);
         recipeListRecyclerView.setAdapter(recipeListAdapter);
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 1);
+
+        GridLayoutManager gridLayoutManager;
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            gridLayoutManager = new GridLayoutManager(getContext(), 4);
+        }
+        else {
+            gridLayoutManager = new GridLayoutManager(getContext(), 1);
+        }
         recipeListRecyclerView.setLayoutManager(gridLayoutManager);
 
         recipeListRecyclerView.setHasFixedSize(true);
@@ -102,14 +110,6 @@ public class RecipeListFragment extends Fragment implements RecipeListAdapter.Re
 
 
         return view;
-    }
-
-    @Override
-    public void onClick(Recipe recipe) {
-        Intent recipeDetailIntent = new Intent(getActivity(),
-                                               RecipeDetailActivity.class);
-        recipeDetailIntent.putExtra("recipe", recipe);
-        startActivity(recipeDetailIntent);
     }
 
     public class RecipeCheck extends AsyncTask {
@@ -306,7 +306,7 @@ public class RecipeListFragment extends Fragment implements RecipeListAdapter.Re
         this.recipeList.clear();
         this.recipeList.addAll(recipeList);
         recipeListAdapter = new RecipeListAdapter(getContext(),
-                                                  this,
+                                                  (MainActivity)getActivity(),
                                                   this.recipeList);
         recipeListRecyclerView.setAdapter(recipeListAdapter);
     }

@@ -1,9 +1,10 @@
 package com.udacity.baking_app.ui;
 
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,23 +16,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.udacity.baking_app.R;
-import com.udacity.baking_app.activity.RecipeStepDetailActivity;
+import com.udacity.baking_app.activity.RecipeDetailActivity;
 import com.udacity.baking_app.adapter.RecipeDetailStepAdapter;
 import com.udacity.baking_app.data.IngredientContract;
 import com.udacity.baking_app.data.StepContract;
 import com.udacity.baking_app.model.Ingredient;
 import com.udacity.baking_app.model.Recipe;
 import com.udacity.baking_app.model.Step;
+import com.udacity.baking_app.service.IngredientService;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.udacity.baking_app.adapter.RecipeDetailStepAdapter.RecipeDetailStepOnClickHandler;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RecipeDetailFragment extends Fragment implements RecipeDetailStepOnClickHandler {
+public class RecipeDetailFragment extends Fragment  {
     private static final String className = RecipeListFragment.class.toString();
 
     @BindView(R.id.textview_ingredients) TextView ingredientsTextView;
@@ -50,7 +51,7 @@ public class RecipeDetailFragment extends Fragment implements RecipeDetailStepOn
 
 
         recipeDetailStepAdapter = new RecipeDetailStepAdapter(getContext(),
-                                                              this,
+                                                              (RecipeDetailActivity)getActivity(),
                                                               new ArrayList<Step>());
         stepListRecyclerView.setAdapter(recipeDetailStepAdapter);
 
@@ -80,14 +81,7 @@ public class RecipeDetailFragment extends Fragment implements RecipeDetailStepOn
             formatIngredients();
         }
 
-
-
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     // Reference: https://developer.android.com/guide/components/activities/activity-lifecycle#java
@@ -201,14 +195,6 @@ public class RecipeDetailFragment extends Fragment implements RecipeDetailStepOn
         }
     }
 
-    @Override
-    public void onClick(Step step) {
-        Intent recipeDetailIntent = new Intent(getActivity(),
-                                               RecipeStepDetailActivity.class);
-        recipeDetailIntent.putExtra("step", step);
-        startActivity(recipeDetailIntent);
-    }
-
     private void formatIngredients() {
         List<Ingredient> ingredentList = recipe.getIngredientList();
         String lineFeed = System.getProperty("line.separator");
@@ -220,6 +206,7 @@ public class RecipeDetailFragment extends Fragment implements RecipeDetailStepOn
             if (i.getQuantity().compareTo(new BigDecimal(1)) > 0) {
                 plural = "s";
             }
+
             stringBuilder.append(String.format("%s %s%s %s%s",
                                                i.getQuantity(),
                                                i.getMeasure(),
@@ -228,13 +215,19 @@ public class RecipeDetailFragment extends Fragment implements RecipeDetailStepOn
                                                lineFeed));
         }
         ingredientsTextView.setText(stringBuilder.toString());
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("RECIPE_ID", recipe.getId());
+        editor.putString("RECIPE_NAME", recipe.getName());
+        editor.apply();
+        IngredientService.startActionUpdateIngredientWidget(getContext());
     }
 
     private void setStepList(List<Step> stepList) {
         recipe.getStepList().clear();
         recipe.getStepList().addAll(stepList);
         recipeDetailStepAdapter = new RecipeDetailStepAdapter(getContext(),
-                                                              this,
+                                                              (RecipeDetailActivity)getActivity(),
                                                               recipe.getStepList());
         stepListRecyclerView.setAdapter(recipeDetailStepAdapter);
     }
