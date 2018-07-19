@@ -99,7 +99,7 @@ public class Step implements Parcelable {
         this.thumbnailURL = in.readString();
     }
 
-    static final Parcelable.Creator<Step> CREATOR
+    public static final Parcelable.Creator<Step> CREATOR
             = new Parcelable.Creator<Step>() {
 
         public Step createFromParcel(Parcel in) {

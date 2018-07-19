@@ -51,8 +51,6 @@ public class RecipeListFragment extends Fragment {
     private static final String className = RecipeListFragment.class.toString();
 
     @BindView(R.id.recycler_view_recipe_list) RecyclerView recipeListRecyclerView;
-//    @BindView(R.id.progress_bar_recipe_list) ProgressBar recipeListProgressBar;
-//    @BindView(R.id.textview_recipe_list_check) TextView recipeListCheckTextView;
 
     private RecipeListAdapter recipeListAdapter;
     private List<Recipe> recipeList = new ArrayList<Recipe>();
@@ -66,15 +64,11 @@ public class RecipeListFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         if (NetworkConnectionUtility.haveActiveNetworkConnection(getConnectivityManager())) {
-//            recipeListProgressBar.setVisibility(View.VISIBLE);
-//            recipeListCheckTextView.setVisibility(View.VISIBLE);
             try {
                 new RecipeCheck().execute().get();
             } catch (Exception e) {
                 displayErrorWithData();
             }
-//            recipeListProgressBar.setVisibility(View.INVISIBLE);
-//            recipeListCheckTextView.setVisibility(View.INVISIBLE);
         }
         else {
             NetworkConnectionUtility.displayNoNetworkConnection(getContext());
@@ -98,15 +92,11 @@ public class RecipeListFragment extends Fragment {
 
         recipeListRecyclerView.setHasFixedSize(true);
 
-//        recipeListProgressBar.setVisibility(View.VISIBLE);
-//        recipeListCheckTextView.setVisibility(View.VISIBLE);
         try {
             new RecipeRetrieval().execute();
         } catch (Exception e) {
             displayErrorWithData();
         }
-//        recipeListProgressBar.setVisibility(View.INVISIBLE);
-//        recipeListCheckTextView.setVisibility(View.INVISIBLE);
 
 
         return view;

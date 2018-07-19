@@ -94,7 +94,7 @@ public class Recipe implements Parcelable {
         in.readTypedList(stepList, Step.CREATOR);
     }
 
-    static final Parcelable.Creator<Recipe> CREATOR
+    public static final Parcelable.Creator<Recipe> CREATOR
             = new Parcelable.Creator<Recipe>() {
 
         public Recipe createFromParcel(Parcel in) {
