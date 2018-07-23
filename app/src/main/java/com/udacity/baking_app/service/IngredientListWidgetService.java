@@ -2,10 +2,14 @@ package com.udacity.baking_app.service;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.udacity.baking_app.R;
+import com.udacity.baking_app.data.IngredientContract;
 import com.udacity.baking_app.model.Ingredient;
 
 import java.math.BigDecimal;
@@ -16,18 +20,16 @@ public class IngredientListWidgetService extends RemoteViewsService {
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return new IngredientRemoteViewsFactory(this.getApplicationContext(), intent);
+        return new IngredientRemoteViewsFactory(this.getApplicationContext());
     }
 
     class IngredientRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
         private Context context;
-        private List<Ingredient> ingredientList;
+        private List<Ingredient> ingredientList = new ArrayList<Ingredient>();
 
-        public IngredientRemoteViewsFactory(Context context,
-                                            Intent intent) {
+        public IngredientRemoteViewsFactory(Context context) {
             this.context = context;
-            ingredientList = intent.getParcelableArrayListExtra("WIDGET_LIST");
         }
 
         @Override
@@ -35,7 +37,21 @@ public class IngredientListWidgetService extends RemoteViewsService {
 
         @Override
         public void onDataSetChanged() {
-            this.ingredientList = new ArrayList<>();
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            int recipeId = sharedPreferences.getInt(getString(R.string.extra_recipe_id), -1);
+
+            if (recipeId != -1) {
+                Cursor cursor = getContentResolver().query(IngredientContract.IngredientEntry.CONTENT_URI,
+                        null,
+                        IngredientContract.IngredientEntry.COLUMN_NAME_RECIPE_ID + " = ?",
+                        new String[] {Integer.toString(recipeId)},
+                        null);
+                this.ingredientList = createIngredientList(cursor);
+            }
+
+            if (ingredientList.size() == 0) {
+                ingredientList.add(new Ingredient(-1, new BigDecimal(0), "", "No Recipe Selected"));
+            }
         }
 
         @Override
@@ -61,17 +77,14 @@ public class IngredientListWidgetService extends RemoteViewsService {
                 plural = "s";
             }
 
-            String ingredientText = String.format("%s %s%s %s%s",
-                                                  ingredient.getQuantity(),
+            String ingredientText = String.format("%s %s%s %s",
+                                                  ingredient.getQuantity() != BigDecimal.ZERO ? ingredient.getQuantity() : "",
                                                   ingredient.getMeasure(),
                                                   plural,
                                                   ingredient.getIngredient());
 
 
             views.setTextViewText(R.id.text_view_widget_ingredient, ingredientText);
-
-            Intent intent = new Intent();
-            views.setOnClickFillInIntent(R.id.text_view_widget_ingredient, intent);
 
             return views;
         }
@@ -95,5 +108,18 @@ public class IngredientListWidgetService extends RemoteViewsService {
         public boolean hasStableIds() {
             return true;
         }
+    }
+
+    private List<Ingredient> createIngredientList(Cursor ingredientDataCursor) {
+        List<Ingredient> ingredientList = new ArrayList<Ingredient>();
+        try {
+            while (ingredientDataCursor.moveToNext()) {
+                ingredientList.add(new Ingredient(ingredientDataCursor));
+            }
+        }
+        finally {
+            ingredientDataCursor.close();
+        }
+        return ingredientList;
     }
 }

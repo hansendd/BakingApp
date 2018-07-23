@@ -5,6 +5,8 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 
 import com.udacity.baking_app.R;
@@ -22,14 +24,9 @@ public class IngredientWidgetProvider extends AppWidgetProvider {
 
     static void updateAppWidget(Context context,
                                 AppWidgetManager appWidgetManager,
-                                int appWidgetId,
-                                List<Ingredient> ingredientList) {
-
-//        CharSequence widgetText = context.getString(R.string.appwidget_text);
+                                int appWidgetId) {
         // Construct the RemoteViews object
-//        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.ingredient_widget_provider);
-//        views.setTextViewText(R.id.appwidget_text, ingredient);
-        RemoteViews remoteViews = getIngredientRemoteListView(context, ingredientList);
+        RemoteViews remoteViews = getIngredientRemoteListView(context);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
@@ -43,10 +40,9 @@ public class IngredientWidgetProvider extends AppWidgetProvider {
 
     public static void updateIngredientWidget(Context context,
                                               AppWidgetManager appWidgetManager,
-                                              int[] appWidgetIds,
-                                              List<Ingredient> ingredientList ) {
+                                              int[] appWidgetIds ) {
         for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId, ingredientList);
+            updateAppWidget(context, appWidgetManager, appWidgetId);
         }
     }
 
@@ -60,15 +56,15 @@ public class IngredientWidgetProvider extends AppWidgetProvider {
         // Enter relevant functionality for when the last widget is disabled
     }
 
-    private static RemoteViews getIngredientRemoteListView(Context context,
-                                                           List<Ingredient> ingredientList) {
+    private static RemoteViews getIngredientRemoteListView(Context context) {
         RemoteViews views = new RemoteViews(context.getPackageName(),  R.layout.ingredient_widget_provider);
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String recipeName = sharedPreferences.getString("RECIPE_NAME", "");
+        views.setTextViewText(R.id.textview_widget_recipe_name, recipeName);
+
         Intent intent = new Intent(context, IngredientListWidgetService.class);
-        intent.putParcelableArrayListExtra("WIDGET_LIST", new ArrayList<Ingredient>(ingredientList));
         views.setRemoteAdapter(R.id.list_view_ingredients, intent);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//        views.setPendingIntentTemplate(R.id.list_view_ingredients, pendingIntent);
 
         return views;
     }

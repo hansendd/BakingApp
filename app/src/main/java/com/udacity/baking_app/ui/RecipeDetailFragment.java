@@ -95,7 +95,7 @@ public class RecipeDetailFragment extends Fragment  {
 //        int scrollLocation = gridLayoutManager.findFirstVisibleItemPosition();
 //
 //        outState.putInt("SCROLL_LOCATION", scrollLocation);
-//        outState.putParcelable("RECIPE", recipe);
+        outState.putParcelable("RECIPE", recipe);
     }
 
     public class IngredientRetrieval extends AsyncTask {

@@ -63,6 +63,7 @@ public class RecipeDetailStepFragment extends Fragment {
         stepList = getArguments().getParcelableArrayList(getString(R.string.extra_step_list));
         selectedIndex = getArguments().getInt(getString(R.string.extra_selected_index));
         step = stepList.get(selectedIndex);
+        exoplayerPosition = 0;
 
         if (step != null) {
             loadThumbnail();
@@ -77,6 +78,7 @@ public class RecipeDetailStepFragment extends Fragment {
 
         previousStepButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                exoplayerPosition = 0;
                 selectedIndex--;
                 step = stepList.get(selectedIndex);
                 loadVideo();
@@ -89,6 +91,7 @@ public class RecipeDetailStepFragment extends Fragment {
 
         nextStepButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                exoplayerPosition = 0;
                 selectedIndex++;
                 step = stepList.get(selectedIndex);
                 loadVideo();
@@ -197,6 +200,7 @@ public class RecipeDetailStepFragment extends Fragment {
 
     private void releasePlayer() {
         if (exoPlayer != null) {
+            getExoPlayerPosition();
             exoPlayer.stop();
             exoPlayer.release();
             exoPlayer = null;
@@ -206,9 +210,8 @@ public class RecipeDetailStepFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (exoPlayer.getPlayWhenReady()) {
-            outState.putLong("EXOPLAYER_POSITION", exoPlayer.getCurrentPosition());
-        }
+        getExoPlayerPosition();
+        outState.putLong("EXOPLAYER_POSITION", exoplayerPosition);
     }
 
     @Override
@@ -217,6 +220,13 @@ public class RecipeDetailStepFragment extends Fragment {
         if (savedInstanceState != null) {
             exoplayerPosition = savedInstanceState.getLong("EXOPLAYER_POSITION");
         }
+    }
 
+    private void getExoPlayerPosition() {
+        if (exoPlayer != null) {
+            if (exoPlayer.getPlayWhenReady()) {
+                exoplayerPosition = exoPlayer.getCurrentPosition();
+            }
+        }
     }
 }

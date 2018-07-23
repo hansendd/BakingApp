@@ -39,7 +39,7 @@
         <provider
             android:name=".data.DbContentProvider"
             android:authorities="com.udacity.baking_app"
-            android:exported="false" />
+            android:exported="true" />
 
         <receiver android:name=".widget.IngredientWidgetProvider">
             <intent-filter>
