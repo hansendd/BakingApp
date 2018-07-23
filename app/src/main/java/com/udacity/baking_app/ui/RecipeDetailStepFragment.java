@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -49,6 +50,8 @@ public class RecipeDetailStepFragment extends Fragment {
     private SimpleExoPlayer exoPlayer;
     private List<Step> stepList;
     private int selectedIndex;
+    private Step step;
+    private long exoplayerPosition;
 
     public RecipeDetailStepFragment() {}
 
@@ -59,12 +62,11 @@ public class RecipeDetailStepFragment extends Fragment {
 
         stepList = getArguments().getParcelableArrayList(getString(R.string.extra_step_list));
         selectedIndex = getArguments().getInt(getString(R.string.extra_selected_index));
-        final Step step = stepList.get(selectedIndex);
+        step = stepList.get(selectedIndex);
 
         if (step != null) {
-            loadVideo(step);
-            loadThumbnail(step);
-            loadInstructions(step);
+            loadThumbnail();
+            loadInstructions();
         }
         else {
             Toast.makeText(getContext(), getString(R.string.error_step_not_found), Toast.LENGTH_SHORT).show();
@@ -76,10 +78,10 @@ public class RecipeDetailStepFragment extends Fragment {
         previousStepButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 selectedIndex--;
-                final Step step = stepList.get(selectedIndex);
-                loadVideo(step);
-                loadThumbnail(step);
-                loadInstructions(step);
+                step = stepList.get(selectedIndex);
+                loadVideo();
+                loadThumbnail();
+                loadInstructions();
                 previousStepButton.setEnabled(selectedIndex > 0);
                 nextStepButton.setEnabled(selectedIndex < stepList.size()-1);
             }
@@ -88,10 +90,10 @@ public class RecipeDetailStepFragment extends Fragment {
         nextStepButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 selectedIndex++;
-                final Step step = stepList.get(selectedIndex);
-                loadVideo(step);
-                loadThumbnail(step);
-                loadInstructions(step);
+                step = stepList.get(selectedIndex);
+                loadVideo();
+                loadThumbnail();
+                loadInstructions();
                 previousStepButton.setEnabled(selectedIndex > 0);
                 nextStepButton.setEnabled(selectedIndex < stepList.size()-1);
             }
@@ -101,28 +103,56 @@ public class RecipeDetailStepFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        releasePlayer();
+    public void onPause() {
+        super.onPause();
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
     }
 
-    private void loadVideo(Step step) {
-        if (exoPlayer != null) {
-            exoPlayer.stop();
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
         }
-        if (step.getVideoURL() != null &&
-            !"".equals(step.getVideoURL())) {
-            if (NetworkConnectionUtility.haveActiveNetworkConnection(getConnectivityManager())) {
-                simpleExoPlayerView.setVisibility(View.VISIBLE);
-                beginPlayer(createVideoURI(step.getVideoURL()));
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+            loadVideo();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Util.SDK_INT <= 23|| exoPlayer == null) {
+            loadVideo();
+        }
+    }
+
+    private void loadVideo() {
+        if (step != null) {
+            if (exoPlayer != null) {
+                exoPlayer.stop();
+            }
+            if (step.getVideoURL() != null &&
+                    !"".equals(step.getVideoURL())) {
+                if (NetworkConnectionUtility.haveActiveNetworkConnection(getConnectivityManager())) {
+                    simpleExoPlayerView.setVisibility(View.VISIBLE);
+                    beginPlayer(createVideoURI(step.getVideoURL()));
+                }
+            }
+            else {
+                simpleExoPlayerView.setVisibility(View.GONE);
             }
         }
-        else {
-            simpleExoPlayerView.setVisibility(View.GONE);
-        }
     }
 
-    private void loadThumbnail(Step step) {
+    private void loadThumbnail() {
         if (null != step.getThumbnailURL() &&
             !"".equals(step.getThumbnailURL())) {
             if (NetworkConnectionUtility.haveActiveNetworkConnection(getConnectivityManager())) {
@@ -133,7 +163,7 @@ public class RecipeDetailStepFragment extends Fragment {
         }
     }
 
-    private void loadInstructions(Step step) {
+    private void loadInstructions() {
         stepInstructionsTextView.setText(step.getDescription());
     }
 
@@ -159,22 +189,10 @@ public class RecipeDetailStepFragment extends Fragment {
                                                            null,
                                                            null);
         exoPlayer.prepare(mediaSource);
-
-            // Source of logic:
-            // https://stackoverflow.com/questions/46713761/how-to-play-video-full-screen-in-landscape-using-exoplayer
-
-//            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)simpleExoPlayerView.getLayoutParams();
-//            params.width = params.MATCH_PARENT;
-//            params.height = 500;
-//            ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-//
-//            if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//                params.height = params.MATCH_PARENT;
-//                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
-//            }
-
+        if (exoplayerPosition != 0) {
+            exoPlayer.seekTo(exoplayerPosition);
+        }
         exoPlayer.setPlayWhenReady(true);
-//        }
     }
 
     private void releasePlayer() {
@@ -183,5 +201,22 @@ public class RecipeDetailStepFragment extends Fragment {
             exoPlayer.release();
             exoPlayer = null;
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (exoPlayer.getPlayWhenReady()) {
+            outState.putLong("EXOPLAYER_POSITION", exoPlayer.getCurrentPosition());
+        }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            exoplayerPosition = savedInstanceState.getLong("EXOPLAYER_POSITION");
+        }
+
     }
 }

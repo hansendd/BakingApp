@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 
@@ -21,6 +22,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
 
     private boolean twoPane;
     private String recipeName;
+    private Recipe recipe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +33,11 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
 
         Bundle selectedRecipeBundle = getIntent().getExtras();
 
-        Recipe recipe = getIntent().getParcelableExtra(getString(R.string.extra_recipe));
+        if (recipe == null) {
+            recipe = getIntent().getParcelableExtra(getString(R.string.extra_recipe));
+        }
+
         recipeName = recipe.getName();
-        getSupportActionBar().setTitle(recipeName);
 
         RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
         recipeDetailFragment.setArguments(selectedRecipeBundle);
@@ -45,7 +49,11 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
             twoPane = true;
         }
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Toolbar navigationToolbar = (Toolbar) findViewById(R.id.toolbar_navigation);
+        setSupportActionBar(navigationToolbar);
+        getSupportActionBar().setHomeButtonEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setTitle(recipeName);
     }
 
     @Override
@@ -83,5 +91,17 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(getString(R.string.extra_recipe), recipe);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        recipe = savedInstanceState.getParcelable(getString(R.string.extra_recipe));
     }
 }

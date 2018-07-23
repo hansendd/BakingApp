@@ -47,11 +47,12 @@ public class IngredientService extends IntentService {
                                                    new String[] {Integer.toString(recipeId)},
                                                    null);
         List<Ingredient> ingredientList = createIngredientList(cursor);
-        String ingredients = formatIngredients(recipeName, ingredientList);
+//        String ingredients = formatIngredients(recipeName, ingredientList);
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, IngredientWidgetProvider.class));
-        IngredientWidgetProvider.updateIngredientWidget(this, appWidgetManager, appWidgetIds, ingredients);
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view_ingredients);
+        IngredientWidgetProvider.updateIngredientWidget(this, appWidgetManager, appWidgetIds, ingredientList);
     }
 
     private List<Ingredient> createIngredientList(Cursor ingredientDataCursor) {
@@ -67,27 +68,27 @@ public class IngredientService extends IntentService {
         return ingredientList;
     }
 
-    private String formatIngredients(String recipeName,
-                                     List<Ingredient> ingredientList) {
-        String lineFeed = System.getProperty("line.separator");
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(String.format("Ingredients for %s:", recipeName));
-        stringBuilder.append(lineFeed);
-        for (Ingredient i : ingredientList) {
-            String plural = "";
-            if (i.getQuantity().compareTo(new BigDecimal(1)) > 0) {
-                plural = "s";
-            }
-
-            stringBuilder.append(String.format("%s %s%s %s%s",
-                    i.getQuantity(),
-                    i.getMeasure(),
-                    plural,
-                    i.getIngredient(),
-                    lineFeed));
-        }
-        return stringBuilder.toString();
-    }
+//    private String formatIngredients(String recipeName,
+//                                     List<Ingredient> ingredientList) {
+//        String lineFeed = System.getProperty("line.separator");
+//        StringBuilder stringBuilder = new StringBuilder();
+//        stringBuilder.append(String.format("Ingredients for %s:", recipeName));
+//        stringBuilder.append(lineFeed);
+//        for (Ingredient i : ingredientList) {
+//            String plural = "";
+//            if (i.getQuantity().compareTo(new BigDecimal(1)) > 0) {
+//                plural = "s";
+//            }
+//
+//            stringBuilder.append(String.format("%s %s%s %s%s",
+//                    i.getQuantity(),
+//                    i.getMeasure(),
+//                    plural,
+//                    i.getIngredient(),
+//                    lineFeed));
+//        }
+//        return stringBuilder.toString();
+//    }
 
     public static void startActionUpdateIngredientWidget(Context context) {
         Intent intent = new Intent(context, IngredientService.class);

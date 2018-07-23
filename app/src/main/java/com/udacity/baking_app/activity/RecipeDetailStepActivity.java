@@ -3,6 +3,7 @@ package com.udacity.baking_app.activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 
@@ -20,16 +21,19 @@ public class RecipeDetailStepActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             Bundle selectedRecipeBundle = getIntent().getExtras();
 
-            String recipeName = getIntent().getStringExtra(getString(R.string.extra_recipe_name));
-            getSupportActionBar().setTitle(recipeName);
-
             RecipeDetailStepFragment recipeDetailStepFragment = new RecipeDetailStepFragment();
             recipeDetailStepFragment.setArguments(selectedRecipeBundle);
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().add(R.id.recipe_detail_step_container, recipeDetailStepFragment).commit();
 
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            String recipeName = getIntent().getStringExtra(getString(R.string.extra_recipe_name));
+
+            Toolbar navigationToolbar = (Toolbar) findViewById(R.id.toolbar_navigation);
+            setSupportActionBar(navigationToolbar);
+            getSupportActionBar().setHomeButtonEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setTitle(recipeName);
         }
 
     }

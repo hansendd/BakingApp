@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 
 import com.udacity.baking_app.R;
 import com.udacity.baking_app.adapter.RecipeListAdapter;
@@ -17,6 +18,12 @@ public class MainActivity extends AppCompatActivity implements RecipeListAdapter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar navigationToolbar = (Toolbar) findViewById(R.id.toolbar_navigation);
+        setSupportActionBar(navigationToolbar);
+        getSupportActionBar().setHomeButtonEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setTitle("Baking App");
     }
 
     @Override

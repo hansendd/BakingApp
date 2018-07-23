@@ -5,10 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-<fragment
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/recipe_list_container"
-    android:name="com.udacity.baking_app.ui.RecipeListFragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+
+    <include
+        layout="@layout/navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <fragment
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/recipe_list_container"
+        android:name="com.udacity.baking_app.ui.RecipeListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </LinearLayout>
